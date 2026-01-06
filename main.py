@@ -4,6 +4,7 @@ import json
 import secrets
 import string
 import os
+import pyperclip
 
 from storage import Storage
 
@@ -73,6 +74,9 @@ def main():
     get_parser.add_argument(
         "service", help="The service name to retrieve the password for"
     )
+    get_parser.add_argument(
+        "-c", "--copy", action="store_true", help="Copy the password to the clipboard"
+    )
 
     # Update command
     update_parser = subparsers.add_parser("update", help="Update a password entry")
@@ -119,9 +123,13 @@ def main():
 
         if args.service in passwords:
             entry = passwords[args.service]
-            print(f"Service: {args.service}")
-            print(f"Username: {entry['username']}")
-            print(f"Password: {entry['password']}")
+            if args.copy:
+                pyperclip.copy(entry['password'])
+                print(f"Password for {args.service} copied to clipboard.")
+            else:
+                print(f"Service: {args.service}")
+                print(f"Username: {entry['username']}")
+                print(f"Password: {entry['password']}")
         else:
             print(f"No password found for {args.service}.")
 

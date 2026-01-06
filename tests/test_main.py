@@ -90,6 +90,26 @@ class TestMainCommands(unittest.TestCase):
         mock_print.assert_any_call("Username: test_user")
         mock_print.assert_any_call("Password: test_password")
 
+    @patch('sys.argv', ['main.py', 'get', 'google', '-c'])
+    @patch('main.pyperclip.copy')
+    @patch('main.getpass.getpass')
+    @patch('main.Storage')
+    @patch('builtins.print')
+    def test_get_command_copy(self, mock_print, mock_storage_class, mock_getpass, mock_pyperclip_copy):
+        mock_getpass.return_value = 'master_password'
+        mock_storage_instance = MagicMock()
+        mock_storage_class.return_value = mock_storage_instance
+
+        test_data = {'google': {'username': 'test_user', 'password': 'test_password'}}
+        mock_storage_instance.load.return_value = json.dumps(test_data)
+
+        main()
+
+        mock_storage_class.assert_called_with('master_password')
+        mock_storage_instance.load.assert_called_once()
+        mock_pyperclip_copy.assert_called_once_with('test_password')
+        mock_print.assert_called_with("Password for google copied to clipboard.")
+
     @patch('sys.argv', ['main.py', 'delete', 'google'])
     @patch('main.getpass.getpass')
     @patch('main.Storage')
