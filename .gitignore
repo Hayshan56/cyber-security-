@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+salt.key
+*.encrypted
+test_salt.key
