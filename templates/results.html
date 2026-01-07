@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: auto; }
+        .port-info { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; }
+        .vuln-info { border-left: 3px solid #f44336; padding-left: 15px; margin-top: 10px; }
+        h3 { color: #333; }
+        h4 { color: #f44336; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Scan Results for {{ target }}</h2>
+
+    {% if results %}
+        {% for port, info in results.items() %}
+            <div class="port-info">
+                <h3>Port {{ port }}/tcp is open</h3>
+                <p><strong>Service:</strong> {{ info.service }}</p>
+                <p><strong>Product:</strong> {{ info.product }}</p>
+                <p><strong>Version:</strong> {{ info.version }}</p>
+
+                {% if info.vulnerabilities %}
+                    <h4>Found Vulnerabilities:</h4>
+                    {% for vuln in info.vulnerabilities %}
+                        <div class="vuln-info">
+                            <p><strong>CVE:</strong> {{ vuln.cve_id }} (<strong>Severity:</strong> {{ vuln.severity }})</p>
+                            <p><strong>Description:</strong> {{ vuln.description }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No known vulnerabilities found for this service version.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No open ports with service information were found, or the host is down.</p>
+    {% endif %}
+
+    <a href="/">Start a new scan</a>
+</div>
+
+</body>
+</html>

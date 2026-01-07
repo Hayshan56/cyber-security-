@@ -1,72 +1,68 @@
-# Secure Password Manager
+# Web-Based Network Vulnerability Scanner (Asynchronous)
 
-This is a secure, command-line password manager written in Python.
+This is a web-based network vulnerability scanner that uses a Flask web server, a Celery task queue for asynchronous scanning, and a Redis message broker.
 
 ## Features
 
-- **Strong Password Generation:** Generate cryptographically secure passwords of a specified length.
-- **Secure Storage:** Passwords are encrypted using AES-128-CBC with a key derived from a master password using PBKDF2. Each password file has a unique salt to protect against rainbow table attacks.
-- **Full CRUD Functionality:** Add, retrieve, update, delete, and list password entries.
-- **Clipboard Integration:** Copy passwords directly to the clipboard for convenience and security.
+- **Asynchronous Scanning:** Scans are run in the background, allowing for a non-blocking user interface.
+- **Web Dashboard:** A simple, user-friendly web interface for running scans and viewing results.
+- **Port Scanning:** Uses `nmap` to discover open TCP ports.
+- **Service & Version Detection:** Identifies the software and version running on open ports.
+- **Vulnerability Lookup:** Queries the NVD for CVEs related to the discovered services.
+- **Reporting:** Displays a clear report of open ports, services, and associated vulnerabilities.
+
+## Prerequisites
+
+- **Python 3:** The script is written for Python 3.
+- **nmap:** The `nmap` command-line tool must be installed and in your system's PATH.
+- **Redis:** A Redis server must be running on `localhost:6379`. You can install it with `sudo apt-get install redis-server` on Debian/Ubuntu or download from [redis.io](https://redis.io/download).
 
 ## Installation
 
-1.  **Clone the repository:**
+1.  **Clone the repository.**
+2.  **Set up a virtual environment.**
+3.  **Install the required Python libraries:**
     ```bash
-    git clone <repository_url>
-    cd secure-password-manager
-    ```
-
-2.  **Install dependencies:**
-    It is recommended to use a virtual environment.
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
     pip install -r requirements.txt
     ```
 
+## NVD API Key (Recommended)
+
+To significantly improve the scanner's speed, it is highly recommended to obtain a free API key from the [NVD](https://nvd.nist.gov/developers/request-an-api-key) and enter it in the web form.
+
 ## Usage
 
-The main entry point is `main.py`.
+You will need to run three separate processes in three different terminals.
 
-### Generate a new password
+1.  **Start the Redis server** (if not already running):
+    ```bash
+    redis-server
+    ```
+
+2.  **Start the Celery worker:**
+    Navigate to the project directory and run:
+    ```bash
+    celery -A celery_worker.celery worker --loglevel=info
+    ```
+
+3.  **Run the Flask web server:**
+    ```bash
+    python app.py
+    ```
+
+4.  **Open your web browser** and navigate to `http://127.0.0.1:5000`.
+
+5.  Enter the target IP and optional NVD API key and start the scan.
+
+## Production Deployment
+
+For a production environment, do not use the built-in Flask development server (`app.run(debug=True)`). Instead, use a production-grade WSGI server like Gunicorn or uWSGI.
+
+Example with Gunicorn:
 ```bash
-python main.py generate [-l LENGTH]
-```
-Example:
-```bash
-python main.py generate -l 24
+gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
 ```
 
-### Add a new password entry
-```bash
-python main.py add <service> <username>
-```
-You will be prompted for your master password and the password to store.
+## Disclaimer
 
-### Retrieve a password
-```bash
-python main.py get <service> [-c]
-```
-- Use the `-c` or `--copy` flag to copy the password directly to the clipboard.
-You will be prompted for your master password.
-
-### Update a password entry
-```bash
-python main.py update <service> [-u NEW_USERNAME] [-p]
-```
-- Use `-u` to specify a new username.
-- Use `-p` to be prompted for a new password.
-You will be prompted for your master password.
-
-### Delete a password entry
-```bash
-python main.py delete <service>
-```
-You will be prompted for your master password.
-
-### List all stored services
-```bash
-python main.py list
-```
-You will be prompted for your master password.
+This tool is for educational purposes and authorized security testing only.

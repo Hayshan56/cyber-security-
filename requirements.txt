@@ -1,2 +1,5 @@
-cryptography==46.0.3
-pyperclip==1.11.0
+python-nmap
+requests
+Flask
+celery
+redis

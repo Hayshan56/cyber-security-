@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability Scanner</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: auto; }
+        input[type=text] { width: 100%; padding: 12px 20px; margin: 8px 0; box-sizing: border-box; }
+        input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Network Vulnerability Scanner</h2>
+    <form action="/scan" method="post">
+        <label for="target">Target IP Address</label>
+        <input type="text" id="target" name="target" placeholder="e.g., 192.168.1.1">
+
+        <label for="api_key">NVD API Key (Optional)</label>
+        <input type="text" id="api_key" name="api_key" placeholder="Enter your NVD API key for faster scanning">
+
+        <input type="submit" value="Start Scan">
+    </form>
+</div>
+
+</body>
+</html>
